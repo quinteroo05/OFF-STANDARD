@@ -52,7 +52,9 @@ a{color:inherit}
 .bar{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
 .it{position:absolute;left:0;top:var(--by);padding:0;display:block;outline:0}
 .sw{position:relative;will-change:transform}
-.sw img{position:absolute;left:0;display:block;pointer-events:none;-webkit-user-drag:none;filter:drop-shadow(0 16px 18px rgba(40,30,60,.2))}
+.sw img{position:absolute;left:0;display:block;pointer-events:none;-webkit-user-drag:none}
+/* sombra con degradado (sin filter: en iPhone el drop-shadow sobre capas animadas se ve como un cuadro) */
+.sw .sd{position:absolute;pointer-events:none;background:radial-gradient(closest-side,rgba(40,30,60,.2),rgba(40,30,60,.07) 60%,transparent)}
 .sw .hk{position:absolute;top:0;width:1px;height:1px;overflow:visible;pointer-events:none;z-index:2}
 .it:focus-visible .sw{outline:2px solid var(--ink);outline-offset:6px;border-radius:6px}
 .tg{position:absolute;top:0;display:flex;flex-direction:column;align-items:center;transform:translateX(-50%) rotate(30deg);transform-origin:50% 0;z-index:3;pointer-events:none}
@@ -76,7 +78,9 @@ a{color:inherit}
 .dw{position:relative;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:calc(64px + env(safe-area-inset-top)) 22px calc(22px + env(safe-area-inset-bottom));overflow:auto}
 .dh{position:relative;transform-origin:0 0;flex:none}
 .dh{--dz:min(38svh,58vw)}
-.dh img{display:block;height:calc(var(--dz) / var(--bf,.81));width:auto;filter:drop-shadow(0 22px 24px rgba(40,30,60,.22));transition:opacity .18s}
+.dh{isolation:isolate}
+.dh::before{content:"";position:absolute;left:-6%;right:-6%;top:12%;bottom:-6%;z-index:-1;pointer-events:none;background:radial-gradient(closest-side,rgba(40,30,60,.2),rgba(40,30,60,.07) 60%,transparent)}
+.dh img{display:block;height:calc(var(--dz) / var(--bf,.81));width:auto;transition:opacity .18s}
 .dh .wire{position:absolute;left:50%;top:0;height:11%;width:auto;aspect-ratio:36/30;overflow:visible;transform:translate(-36.1%,-100%)}
 .di{width:100%;max-width:340px;text-align:center}
 .di .cd{font-size:10px;letter-spacing:.2em;color:var(--mut)}
@@ -246,7 +250,7 @@ function build(){
   el.innerHTML=`<div class="sw" style="width:${sw}px;height:${Math.max(F.h,S?S.h:0)+hh*.73}px;transform-origin:${px}px 0">`+
    `<svg class="hk" style="left:${px}px" aria-hidden="true">${hook(sd?sd.nk:.85)}</svg>`+
    `<span class="tg" style="left:${px-hr}px;top:${hh*.45}px;--sh:${hh*.75}px;--fs:${Math.max(7.5,B*.034)}px"><span>${mx(p.p)}</span></span>`+
-   `<img src="${fc.src}" alt="" style="top:${hh*.73}px;left:${px-hr-fc.sh}px;width:${fc.w}px;height:${fc.h}px;transform-origin:${fc.sh}px 0"></div>`;
+   `<i class="sd" style="${sdS(fc,px-hr,hh*.73)}"></i><img src="${fc.src}" alt="" style="top:${hh*.73}px;left:${px-hr-fc.sh}px;width:${fc.w}px;height:${fc.h}px;transform-origin:${fc.sh}px 0"></div>`;
   rail.appendChild(el);
   const sl=slot(p),it={el,sw:el.firstChild,p,base:acc,sl,px,hr,F,S,f:S?'s':'f',a:0,av:0,s:1,ph:Math.random()*6.28};acc+=sl;
   if(openIt&&openIt.p===p&&!r){openIt=it;el.style.visibility='hidden'}
@@ -255,21 +259,23 @@ function build(){
   el.addEventListener('click',e=>{if(e.detail===0)tap(it)});
   el.addEventListener('focus',()=>{if(!drag)center(it)});
   items.push(it)})}
+/* sombra: elipse difusa del tamaño de la prenda, un poco más abajo y más ancha */
+const sdS=(o,l,t)=>`left:${(l-o.sh-o.w*.08).toFixed(1)}px;top:${(t+o.h*.1).toFixed(1)}px;width:${(o.w*1.16).toFixed(1)}px;height:${(o.h*.98).toFixed(1)}px`;
 /* gira la prenda en el perchero: 's' = de lado, 'f' = de frente.
-   Giro 3D sobre el gancho: a mitad del giro la prenda queda de canto y ahí se cambia la foto (ya decodificada), sin rebote */
-const SH='drop-shadow(0 16px 18px rgba(40,30,60,.2))';
+   Giro 3D sobre el gancho (solo transform, sin filtros): a mitad del giro la prenda queda de canto y ahí se cambia la foto (ya decodificada), sin rebote */
 function face(it,f,cb){
  if(!it.S||it.f===f){cb&&cb();return}it.f=f;
  const im=it.sw.querySelector('img'),o=f==='f'?it.F:it.S,tk=it.tk=(it.tk||0)+1,
-  set=()=>{im.src=o.src;Object.assign(im.style,{left:it.px-it.hr-o.sh+'px',width:o.w+'px',height:o.h+'px',transformOrigin:o.sh+'px 0'})};
+  sd=it.sw.querySelector('.sd'),
+  set=()=>{im.src=o.src;Object.assign(im.style,{left:it.px-it.hr-o.sh+'px',width:o.w+'px',height:o.h+'px',transformOrigin:o.sh+'px 0'});sd.style.cssText=sdS(o,it.px-it.hr,parseFloat(im.style.top))};
  im.getAnimations().forEach(a=>a.cancel());
  if(reduce){set();cb&&cb();return}
  nudge(it,f==='f'?22:-22);
  const dir=f==='f'?1:-1,P=d=>`perspective(${Math.round(o.h*3)}px) rotateY(${d}deg)`,
   pre=new Image();pre.src=o.src;const ready=Promise.race([(pre.decode?pre.decode():Promise.resolve()).catch(()=>{}),new Promise(r=>setTimeout(r,150))]);
- const a1=im.animate([{transform:P(0),filter:SH},{transform:P(90*dir),filter:SH+' brightness(.82)'}],{duration:210,easing:'cubic-bezier(.55,0,.8,.4)'});
+ const a1=im.animate([{transform:P(0)},{transform:P(90*dir)}],{duration:210,easing:'cubic-bezier(.55,0,.8,.4)'});
  Promise.all([a1.finished,ready]).then(()=>{if(tk!==it.tk)return;set();
-  im.animate([{transform:P(-90*dir),filter:SH+' brightness(.82)'},{transform:P(0),filter:SH}],{duration:340,easing:'cubic-bezier(.2,.6,.25,1)'}).finished.then(()=>{if(tk===it.tk)cb&&cb()},()=>{})},()=>{})}
+  im.animate([{transform:P(-90*dir)},{transform:P(0)}],{duration:340,easing:'cubic-bezier(.2,.6,.25,1)'}).finished.then(()=>{if(tk===it.tk)cb&&cb()},()=>{})},()=>{})}
 /* primer clic: la prenda se centra y gira de frente; segundo clic: se abre su ficha */
 function select(it){if(sel&&sel!==it)face(sel,'s');sel=it;center(it);nudge(it,40);face(it,'f')}
 function unselect(){if(sel)face(sel,'s');sel=null}
