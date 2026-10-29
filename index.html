@@ -81,7 +81,7 @@ a{color:inherit}
 .dh{isolation:isolate}
 .dh::before{content:"";position:absolute;left:-6%;right:-6%;top:12%;bottom:-6%;z-index:-1;pointer-events:none;background:radial-gradient(closest-side,rgba(40,30,60,.2),rgba(40,30,60,.07) 60%,transparent)}
 .dh img{display:block;height:calc(var(--dz) / var(--bf,.81));width:auto;transition:opacity .18s}
-.dh .wire{position:absolute;left:50%;top:0;height:11%;width:auto;aspect-ratio:36/30;overflow:visible;transform:translate(-36.1%,-100%)}
+.dh .wire{position:absolute;left:50%;top:0;height:11%;width:auto;aspect-ratio:25/30;overflow:visible;transform:translate(-68%,-100%)}
 .di{width:100%;max-width:340px;text-align:center}
 .di .cd{font-size:10px;letter-spacing:.2em;color:var(--mut)}
 .di h2{font:600 15px/1.3 var(--sans);margin-top:6px}
@@ -204,7 +204,13 @@ const P=[
 const $=s=>document.querySelector(s),mx=n=>'$'+n.toLocaleString('es-MX');
 const rail=$('#rail');
 const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches,canHover=matchMedia('(hover:hover) and (pointer:fine)').matches;
-const WIRE='<svg class="wire" viewBox="-13 -30 36 30" aria-hidden="true"><path d="M0 26V-10C0 -20 2 -26 8 -27C14 -28 17.5 -23 16 -17.5" fill="none" stroke="#000" stroke-width="4.2" stroke-linecap="round" transform="translate(.8 1)" opacity=".35"/><path d="M0 26V-10C0 -20 2 -26 8 -27C14 -28 17.5 -23 16 -17.5" fill="none" stroke="url(#cr)" stroke-width="3.4" stroke-linecap="round"/></svg>';
+/* gancho de alambre en forma de "?": palito recto, vuelta grande redonda y la punta enroscada.
+   sx = x del palito, y1 = dónde empieza abajo, R = radio de la vuelta, cy = centro de la vuelta, rr = radio del rizo de la punta */
+const hookD=(sx,y1,R,cy,rr)=>{const f=n=>n.toFixed(2),cx=sx-.342*R,py=cy+.94*R,a=-159*Math.PI/180,
+ tx=cx+R*Math.cos(a),ty=cy+R*Math.sin(a),qx=tx+2*rr*Math.cos(a),qy=ty+2*rr*Math.sin(a);
+ return `M${f(sx)} ${f(y1)}V${f(py+R*.6)}C${f(sx)} ${f(py+R*.3)} ${f(sx-.28*R)} ${f(py+.1*R)} ${f(sx)} ${f(py)}A${f(R)} ${f(R)} 0 1 0 ${f(tx)} ${f(ty)}A${f(rr)} ${f(rr)} 0 1 1 ${f(qx)} ${f(qy)}A${f(rr)} ${f(rr)} 0 1 1 ${f(tx)} ${f(ty)}`};
+const WD=hookD(0,26,9,-18.3,1.5);
+const WIRE=`<svg class="wire" viewBox="-17 -30 25 30" aria-hidden="true"><path d="${WD}" fill="none" stroke="#000" stroke-width="2.8" stroke-linecap="round" transform="translate(.7 .9)" opacity=".3"/><path d="${WD}" fill="none" stroke="url(#cr)" stroke-width="2.3" stroke-linecap="round"/></svg>`;
 let cart=[];
 try{cart=JSON.parse(localStorage.getItem('os3-cart')||'[]').filter(c=>{const p=P.find(p=>p.code===c.code);return p&&SIZES(p).includes(c.s)})}catch(e){}
 const save=()=>{try{localStorage.setItem('os3-cart',JSON.stringify(cart))}catch(e){}};
@@ -237,8 +243,8 @@ function build(){
  const reps=Math.max(1,Math.ceil((innerWidth+2*pitch)/T));
  M=T*reps;let acc=0;
  /* gancho de alambre: sube del gancho de madera, rodea el tubo por arriba y la punta se pierde detrás */
- const wt=Math.max(1.5,B*.009),hr=3.5+wt/2+.3,an=-44*Math.PI/180,ex=hr*Math.cos(an),ey=hr*Math.sin(an);
- const hook=nk=>{const neck=hh*(.73+nk),hd=`M${-hr} ${neck}L${-hr} 0A${hr} ${hr} 0 0 1 ${ex.toFixed(2)} ${ey.toFixed(2)}`,sp=(s,k,o)=>`<path d="${hd}" stroke="${s}" stroke-width="${k}" transform="translate(${o})"/>`;
+ const wt=Math.max(1.5,B*.009),hr=3.5+wt/2+.3,R=Math.max(hr+wt*1.5,hh*.24),cy=R-3.5-wt/2;
+ const hook=nk=>{const neck=hh*(.73+nk),hd=hookD(-hr,neck,R,cy,wt*.9),sp=(s,k,o)=>`<path d="${hd}" stroke="${s}" stroke-width="${k}" transform="translate(${o})"/>`;
   return `<g fill="none" stroke-linecap="round">${sp('rgba(30,20,40,.13)',wt*1.6,'1.8 3')}${sp('#6f737c',wt,'0 0')}${sp('#c2c6cd',wt*.55,`${-wt*.14} ${-wt*.12}`)}${sp('rgba(255,255,255,.9)',wt*.22,`${-wt*.26} ${-wt*.24}`)}`+
   (nk>.3?`<path d="M${-hr} ${neck-wt*3.4}V${neck}" stroke="#7d818a" stroke-width="${wt*1.75}"/><path d="M${-hr-wt*.3} ${neck-wt*3.2}V${neck-wt*.2}" stroke="rgba(255,255,255,.55)" stroke-width="${wt*.4}"/>`:'')+'</g>'};
  for(let r=0;r<reps;r++)list.forEach((p,j)=>{
