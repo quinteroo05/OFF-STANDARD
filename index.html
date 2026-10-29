@@ -180,7 +180,7 @@ const SIDE={h_buddha:{ar:0.3397,hk:0.935,ox:57.4,nk:0.02},t_color:{ar:0.2839,hk:
 /* tamaños parejos: fracción de cada foto (sin fondo) que ocupa la prenda, de la punta de la capucha o el cuello
    hasta el dobladillo, sin contar el gancho (f = frente, s = lado; medido por el color de cada prenda).
    Todas las hoodies miden lo mismo (TH) y todas las playeras lo mismo (TT), estén de frente o de lado. */
-const BODY={h_azul:{f:.9153,s:.9447},t_brand:{f:.8868,s:.9239},h_negro:{f:.9016,s:.9604},h_roja:{f:.924,s:.9488},t_red:{f:.891,s:.9287},h_blanca:{f:.9826,s:.9168},t_color:{f:.8473,s:.9107},h_buddha:{f:.9727,s:.95},h_jeans:{f:.9692,s:.9434}};
+const BODY={h_azul:{f:.9153,s:.9447},t_brand:{f:.8868,s:.9239},h_negro:{f:.9016,s:.9604},h_roja:{f:.924,s:.9488},t_red:{f:.891,s:.9287},h_blanca:{f:.9826,s:1.02},t_color:{f:.8473,s:.9107},h_buddha:{f:.9727,s:.95},h_jeans:{f:.9692,s:.9434}};
 const TH=.86,TT=.8,TG=k=>k[0]==='t'?TT:TH;
 for(const k in BODY){HK[k]=TG(k)/BODY[k].f;if(SIDE[k])SIDE[k].hk=TG(k)/BODY[k].s}
 const WA='524461246296';
