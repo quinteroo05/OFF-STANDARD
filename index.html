@@ -211,12 +211,13 @@ let list=P.slice(),items=[],B=0,pitch=0,hh=0,M=1,by=0,sag=0;
 let x=0,v=0,lastV=0,target=null,drag=null,hov=null,sel=null,shown=null,openIt=null;
 function layout(){
  const W=innerWidth,H=rail.clientHeight,d=W>=900;
- B=d?Math.min(H*.7,W*.23,420):Math.min(H*.6,W*.4);
- pitch=B*(d?.8:.76);hh=B*.11;
- /* en compu el bloque de prendas queda un poco arriba del centro; en celular, cerca del título */
- by=Math.max(hh*1.4,d?(H-B*1.05)*.4:H*.1);rail.style.setProperty('--by',by+'px');
  /* el tubo se hunde un poco en el centro, como en el video */
  sag=Math.min(W*.035,44);
+ /* en celular las prendas crecen hasta llenar el alto del perchero (cabe la prenda seleccionada, que se agranda 14%) */
+ B=d?Math.min(H*.7,W*.23,420):Math.min((H-8-2*sag)/1.33,W*.95);
+ pitch=B*(d?.8:.76);hh=B*.11;
+ /* en compu el bloque de prendas queda un poco arriba del centro; en celular, cerca del título */
+ by=Math.max(hh*1.4,d?(H-B*1.05)*.4:H*.06);rail.style.setProperty('--by',by+'px');
  const q=`M0 ${by}Q${W/2} ${by+2*sag} ${W} ${by}`;
  $('#bar').setAttribute('width',W);$('#bar').setAttribute('height',H);
  /* sombra difuminada (sin línea marcada) + tubo cromado con brillo arriba y borde oscuro abajo */
