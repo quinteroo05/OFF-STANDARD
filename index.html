@@ -189,8 +189,8 @@ const BODY={h_azul:{f:.9153,s:.9447},t_brand:{f:.8868,s:.9239},h_negro:{f:.9016,
 const TH=.86,TT=.8,TG=k=>k[0]==='t'?TT:TH;
 for(const k in BODY){HK[k]=TG(k)/BODY[k].f;if(SIDE[k])SIDE[k].hk=TG(k)/BODY[k].s}
 const WA='524461246296';
-/* tallas disponibles: playeras M y L; hoodies solo M (Buddha negra M y L, Arch Logo solo L, Essentials XS y G) */
-const SIZES=p=>p.k==='h_negro'?['L']:p.k==='h_ess'?['XS','G']:p.c==='t'||p.k==='h_buddha'?['M','L']:['M'];
+/* tallas disponibles: playeras M y L; hoodies solo M (Buddha negra M y L, Arch Logo solo L, Essentials XS y L) */
+const SIZES=p=>p.k==='h_negro'?['L']:p.k==='h_ess'?['XS','L']:p.c==='t'||p.k==='h_buddha'?['M','L']:['M'];
 const P=[
 {k:'h_azul',n:'World Tour Multi-Patch Full-Zip Hoodie',c:'h',p:1600},
 {k:'t_brand',n:'Box Logo Brand Jeans Graphic Tee',c:'t',p:680},
